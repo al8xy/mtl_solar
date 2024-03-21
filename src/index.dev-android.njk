@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden
+      }
+
+      #walletframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="walletframe"></iframe>
+
+    <script src="../cordova/platforms/android/platform_www/cordova.js"></script>
+    <script nomodule src="polyfills.ts"></script>
+    <script>
+      function onDeviceReady() {
+        const walletframe = document.getElementById("walletframe")
+        walletframe.setAttribute("src", "http://10.0.2.2:1234");
+      }
+
+      document.addEventListener("deviceready", onDeviceReady, false);
+    </script>
+    <script src="./App/bootstrap.cordova.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "name": "org.montelibero.solar",
+  "version": "0.0.0",
+  "private": true,
+  "displayName": "MTL Solar",
+  "cordova": {
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-secure-storage": {},
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-network-information": {},
+      "phonegap-plugin-barcodescanner": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      },
+      "cordova-plugin-splashscreen": {},
+      "cordova-clipboard": {},
+      "cordova-plugin-device": {},
+      "cordova-plugin-safariviewcontroller": {},
+      "cordova-plugin-fingerprint-aio": {
+        "FACEID_USAGE_DESCRIPTION": "Unlock Solar…"
+      },
+      "cordova-plugin-customurlscheme": {
+        "URL_SCHEME": "web+stellar",
+        "ANDROID_SCHEME": " ",
+        "ANDROID_HOST": " ",
+        "ANDROID_PATHPREFIX": "/"
+      },
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-local-notification": {},
+      "cordova-plugin-androidx-adapter": {}
+    }
+  },
+  "dependencies": {
+    "cordova": "^11.0.0",
+    "cordova-clipboard": "^1.2.1",
+    "cordova-plugin-badge": "^0.8.8",
+    "cordova-plugin-device": "^2.0.2",
+    "cordova-plugin-dialogs": "^2.0.1",
+    "cordova-plugin-fingerprint-aio": "^3.0.1",
+    "cordova-plugin-ionic-keyboard": "^2.2.0",
+    "cordova-plugin-local-notification": "^0.9.0-beta.2",
+    "cordova-plugin-network-information": "^2.0.1",
+    "cordova-plugin-safariviewcontroller": "^2.0.0",
+    "cordova-plugin-splashscreen": "^6.0.0",
+    "phonegap-plugin-barcodescanner": "^8.0.1"
+  },
+  "devDependencies": {
+    "compare-func": "^2.0.0",
+    "cordova-android": "^10.1.1",
+    "cordova-fetch": "^3.0.1",
+    "cordova-ios": "^6.1.1",
+    "cordova-plugin-androidx-adapter": "^1.1.3",
+    "cordova-plugin-customurlscheme": "github:bytelabsco/Custom-URL-scheme",
+    "cordova-plugin-secure-storage": "github:satoshipay/cordova-plugin-secure-storage",
+    "dotenv-cli": "^2.0.0",
+    "json": "^10.0.0",
+    "npm-run-all": "^4.1.5"
+  },
+  "scripts": {
+    "install:android": "rm -rf ./plugins && ./scripts/create-config-from-template.sh prod android && cordova platform add android",
+    "install:ios": "rm -rf ./plugins && ./scripts/create-config-from-template.sh prod ios && cordova platform add ios",
+    "remove:android": "cordova platform rm android",
+    "remove:ios": "cordova platform rm ios",
+    "prebuild:android": "rm -rf ../dist/ && NODE_ENV=production PLATFORM=android ../node_modules/.bin/parcel build ../src/index.prod-android.njk --out-dir ../dist --public-url=./ --detailed-report --no-source-maps --no-cache && ./scripts/create-config-from-template.sh prod android",
+    "prebuild:ios": "rm -rf ../dist/ && NODE_ENV=production PLATFORM=ios ../node_modules/.bin/parcel build ../src/index.prod-ios.njk --out-dir ../dist --public-url=./ --detailed-report --no-source-maps --no-cache && ./scripts/create-config-from-template.sh prod ios",
+    "build:android": "npm run prebuild:android && dotenv -- cordova build android",
+    "build:android:signed": "npm run prebuild:android && source ./scripts/signing-env-android.sh && dotenv -- cordova build android --release -- --keystore=$KEYSTORE_LOCATION --storePassword=$KEYSTORE_PASSWORD --alias=$SIGNINGKEY_ALIAS --password=$SIGNINGKEY_PASSWORD --packageType=apk",
+    "build:ios": "npm run prebuild:ios && cordova build ios --buildConfig=build.ios.json",
+    "dev:android": "run-p dev:bundle:android dev:cordova:android",
+    "dev:ios": "run-p dev:bundle:ios dev:cordova:ios",
+    "dev:bundle:android": "PLATFORM=android NODE_ENV=development ../node_modules/.bin/parcel serve ../src/index.dev.njk -p 1234 --out-dir ../dist",
+    "dev:bundle:ios": "PLATFORM=ios NODE_ENV=development ../node_modules/.bin/parcel serve ../src/index.dev.njk -p 1234 --out-dir ../dist",
+    "dev:cordova:android": "../node_modules/.bin/parcel build ../src/index.dev-android.njk --out-dir ../dist --public-url=./ && ./scripts/create-config-from-template.sh dev android && dotenv -- cordova build android",
+    "dev:cordova:ios": "../node_modules/.bin/parcel build ../src/index.dev-ios.njk --out-dir ../dist --public-url=./ && ./scripts/create-config-from-template.sh dev ios && cordova build ios --buildConfig=build.ios.json"
+  }
+}

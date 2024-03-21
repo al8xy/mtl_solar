@@ -1,0 +1,59 @@
+# Don't change the appId! See <https://www.electron.build/configuration/nsis#guid-vs-application-name>
+appId: org.montelibero.solar
+productName: MTL Solar Wallet
+copyright: Copyright © 2024 Montelibero SW-Team
+artifactName: Montelibero-Solar-Wallet-${version}-${os}-${arch}.${ext}
+
+protocols:
+  name: Stellar transaction / payment requests URL,
+  schemes: [web+stellar]
+
+directories:
+  buildResources: ./electron/build
+  output: ./electron/dist
+
+files:
+  - "./dist/*"
+  - "./electron/lib/**"
+
+publish:
+  - provider: github
+    owner: Montelibero
+    repo: mtl_solar
+
+snap:
+  confinement: strict
+  publish:
+    - github
+
+releaseInfo:
+  releaseName: MTL Solar Wallet
+
+win:
+  # Electron builder bug: Without this line the icon gets corrupted on Windows
+  icon: ./electron/build/icon.png
+  target: [nsis]
+
+nsis:
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: true
+  guid: b8804019-34a6-4a79-b415-5a4eab3bc80a
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+msi:
+  warningsAsErrors: false
+
+mac:
+  hardenedRuntime: true
+  entitlements: ./electron/build/entitlements.mac.inherit.plist
+  category: public.app-category.productivity
+
+linux:
+  category: Utility
+  target: [AppImage:x64]
+
+afterPack: ./scripts/electron-builder-afterpack.js
+afterSign: ./scripts/electron-builder-aftersign.js

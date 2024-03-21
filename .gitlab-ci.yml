@@ -1,0 +1,79 @@
+image: node:12-buster
+
+stages:
+  - test
+  - build
+  - release
+
+test:
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: push
+  script:
+    - npm ci
+    - npm test
+
+build_storybook:
+  # just used for testing; does not need to wait for the "test" stage to finish
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+  only:
+    changes:
+      - package.json
+      - .storybook/**
+      - src/**
+      - stories/**
+      - types/**
+  script:
+    - npm ci
+    - npx build-storybook
+
+build_web:
+  # just used for testing; does not need to wait for the "test" stage to finish
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+  only:
+    changes:
+      - package.json
+      - src/**
+      - types/**
+      - web/**
+  script:
+    - npm ci
+    - cd web/ && npm run build
+
+# Note that the `npm run build:*` commands will automatically create a GitHub release and upload binaries
+build_mac:
+  stage: build
+  artifacts:
+    paths:
+      - electron/dist/*.zip
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+  script:
+    - npm ci
+    - npm run build:mac -- --mac=zip
+  only:
+    - master
+
+build_linux:
+  stage: build
+  artifacts:
+    paths:
+      - electron/dist/*.{deb,rpm}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+  script:
+    - apt-get update && apt-get install apt-file && apt-file update
+    - apt-get install -y rpm
+    - npm ci
+    - npm run build:linux -- --linux=deb --linux=rpm
+  only:
+    - master
