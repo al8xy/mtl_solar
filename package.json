@@ -62,7 +62,7 @@
     "lodash.pick": "^4.4.0",
     "nanoid": "^3.1.31",
     "react-hook-form": "^5.0.3",
-    "stellar-sdk": "^9.0.1"
+    "@stellar/stellar-sdk": "^9.0.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.6",
